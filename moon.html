@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Howling Package — Toilet Paper for Werewolves</title>
+<style>
+  :root{
+    --navy:#0b0f1a;
+    --forest:#0f1f16;
+    --silver:#C0C0C0;
+    --silver-pale:#DDE4EB;
+    --blood:#8B0000;
+    --blood-bright:#B3121B;
+    --white:#F5F6F8;
+    --font-display: 'Cinzel', 'Trajan Pro', Georgia, serif;
+    --font-body: 'Jost', 'Futura', 'Century Gothic', sans-serif;
+  }
+
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Jost:wght@300;400;500;600&display=swap');
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+
+  html{scroll-behavior:smooth;}
+
+  body{
+    background:var(--navy);
+    color:var(--white);
+    font-family:var(--font-body);
+    font-weight:300;
+    overflow-x:hidden;
+  }
+
+  h1,h2,h3{
+    font-family:var(--font-display);
+    letter-spacing:0.03em;
+  }
+
+  a{color:inherit;}
+
+  .eyebrow{
+    font-family:var(--font-body);
+    text-transform:uppercase;
+    letter-spacing:0.35em;
+    font-size:0.72rem;
+    color:var(--silver);
+    opacity:0.85;
+  }
+
+  /* ---------- Moon-phase texture backgrounds ---------- */
+  .moonglow-bg{
+    position:relative;
+    background:
+      radial-gradient(circle at 82% 18%, rgba(221,228,235,0.16), transparent 40%),
+      radial-gradient(circle at 82% 18%, rgba(221,228,235,0.35) 0%, transparent 8%),
+      linear-gradient(180deg, #060810 0%, #0b0f1a 55%, #0f1f16 130%);
+  }
+
+  .wolf-pattern{
+    position:absolute;
+    inset:0;
+    opacity:0.05;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240'><path d='M40 200 Q55 140 30 110 Q20 90 45 85 Q55 60 80 70 Q95 50 110 70 Q130 55 135 85 Q160 90 150 115 Q170 145 150 200 Q120 175 110 200 Q100 175 90 200 Q75 178 65 200 Q55 178 40 200Z' fill='%23DDE4EB'/></svg>");
+    background-repeat:repeat;
+    background-size:220px;
+    pointer-events:none;
+  }
+
+  /* ---------- Nav ---------- */
+  nav{
+    position:fixed;
+    top:0; left:0; right:0;
+    z-index:100;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:22px 6vw;
+    background:linear-gradient(180deg, rgba(6,8,16,0.9), rgba(6,8,16,0));
+    backdrop-filter:blur(2px);
+  }
+  .brand{
+    font-family:var(--font-display);
+    font-size:1.1rem;
+    font-weight:700;
+    letter-spacing:0.12em;
+    color:var(--silver-pale);
+  }
+  .brand span{color:var(--blood-bright);}
+  nav .nav-links{display:flex;gap:34px;font-size:0.82rem;letter-spacing:0.08em;text-transform:uppercase;}
+  nav .nav-links a{text-decoration:none;opacity:0.75;transition:opacity .25s;}
+  nav .nav-links a:hover{opacity:1;}
+
+  /* ---------- Buttons ---------- */
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    padding:16px 34px;
+    border-radius:2px;
+    font-family:var(--font-body);
+    font-weight:500;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    font-size:0.85rem;
+    text-decoration:none;
+    cursor:pointer;
+    border:1px solid transparent;
+    transition:transform .25s ease, box-shadow .25s ease;
+  }
+  .btn-blood{
+    background:linear-gradient(155deg, var(--blood-bright), var(--blood) 60%, #4d0000);
+    color:var(--white);
+    box-shadow:0 8px 24px rgba(139,0,0,0.35);
+  }
+  .btn-blood:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(139,0,0,0.5);}
+
+  .btn-silver{
+    background:linear-gradient(155deg, #F2F4F6, var(--silver) 55%, #8b9299);
+    color:#12141a;
+    box-shadow:0 8px 24px rgba(192,192,192,0.25);
+  }
+  .btn-silver:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(192,192,192,0.4);}
+
+  .btn-outline{
+    background:transparent;
+    border:1px solid rgba(221,228,235,0.4);
+    color:var(--silver-pale);
+  }
+  .btn-outline:hover{border-color:var(--silver-pale);background:rgba(221,228,235,0.06);}
+
+  .easypagex-note{
+    display:block;
+    margin-top:10px;
+    font-size:0.7rem;
+    letter-spacing:0.05em;
+    opacity:0.55;
+    text-decoration:none;
+  }
+  .easypagex-note:hover{opacity:0.9;text-decoration:underline;}
+
+  /* ---------- Hero ---------- */
+  .hero{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    padding:0 6vw;
+    position:relative;
+  }
+  .hero-grid{
+    display:grid;
+    grid-template-columns:1.1fr 0.9fr;
+    gap:60px;
+    align-items:center;
+    width:100%;
+    padding-top:90px;
+    position:relative;
+    z-index:2;
+  }
+  .hero h1{
+    font-size:clamp(2.6rem, 5vw, 4.4rem);
+    line-height:1.05;
+    color:var(--white);
+    margin:18px 0 22px;
+  }
+  .hero h1 em{
+    font-style:normal;
+    color:var(--silver-pale);
+    background:linear-gradient(180deg, var(--silver-pale), var(--silver));
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+  }
+  .hero p.tagline{
+    font-size:1.15rem;
+    color:var(--silver-pale);
+    font-style:italic;
+    margin-bottom:34px;
+    font-weight:400;
+  }
+
+  .moon-scene{
+    position:relative;
+    aspect-ratio:1/1.15;
+    border-radius:4px;
+    overflow:hidden;
+    box-shadow:0 30px 80px rgba(0,0,0,0.6), inset 0 0 0 1px rgba(221,228,235,0.15);
+  }
+  .moon-scene svg{width:100%;height:100%;display:block;}
+
+  /* ---------- Sections generic ---------- */
+  section{
+    padding:120px 6vw;
+    position:relative;
+  }
+  .section-head{
+    max-width:640px;
+    margin-bottom:60px;
+  }
+  .section-head h2{
+    font-size:clamp(2rem,3.4vw,2.8rem);
+    margin-top:10px;
+    color:var(--white);
+  }
+
+  /* ---------- Problem section ---------- */
+  .problem{
+    background:var(--forest);
+    border-top:1px solid rgba(192,192,192,0.1);
+    border-bottom:1px solid rgba(192,192,192,0.1);
+  }
+  .problem-list{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:2px;
+    background:rgba(192,192,192,0.12);
+    border:1px solid rgba(192,192,192,0.12);
+  }
+  .problem-item{
+    background:var(--forest);
+    padding:34px 32px;
+    display:flex;
+    gap:18px;
+    align-items:flex-start;
+  }
+  .problem-item .mark{
+    font-family:var(--font-display);
+    color:var(--blood-bright);
+    font-size:1.5rem;
+    line-height:1;
+  }
+  .problem-item p{color:var(--silver-pale);font-size:1rem;line-height:1.5;}
+
+  /* ---------- Why section ---------- */
+  .why-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(240px,1fr));
+    gap:36px;
+  }
+  .why-card{
+    padding:36px 30px;
+    border:1px solid rgba(192,192,192,0.18);
+    background:linear-gradient(160deg, rgba(221,228,235,0.05), rgba(0,0,0,0));
+    border-radius:2px;
+    transition:border-color .3s, transform .3s;
+  }
+  .why-card:hover{border-color:var(--silver-pale);transform:translateY(-4px);}
+  .why-card .icon{
+    width:42px;height:42px;margin-bottom:20px;
+    color:var(--silver-pale);
+  }
+  .why-card h3{font-size:1.05rem;color:var(--white);margin-bottom:10px;letter-spacing:0.02em;}
+  .why-card p{font-size:0.92rem;color:rgba(245,246,248,0.65);line-height:1.55;}
+
+  /* ---------- How it works ---------- */
+  .how{
+    background:var(--forest);
+  }
+  .howl-track{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:0;
+    position:relative;
+  }
+  .howl-track::before{
+    content:"";
+    position:absolute;
+    top:26px; left:6%; right:6%;
+    height:1px;
+    background:repeating-linear-gradient(90deg, rgba(192,192,192,0.4) 0 8px, transparent 8px 16px);
+  }
+  .howl-step{
+    padding:0 22px;
+    position:relative;
+  }
+  .howl-step .phase{
+    width:52px;height:52px;
+    border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    background:var(--navy);
+    border:1px solid var(--silver);
+    margin-bottom:22px;
+    position:relative;
+    z-index:2;
+  }
+  .howl-step h3{font-size:1rem;color:var(--white);margin-bottom:10px;}
+  .howl-step p{font-size:0.88rem;color:rgba(245,246,248,0.6);line-height:1.5;}
+
+  /* ---------- Plans ---------- */
+  .plans-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:26px;
+  }
+  .plan-card{
+    border:1px solid rgba(192,192,192,0.2);
+    padding:38px 30px;
+    display:flex;
+    flex-direction:column;
+    background:rgba(255,255,255,0.02);
+    position:relative;
+  }
+  .plan-card.featured{
+    border-color:var(--blood-bright);
+    background:linear-gradient(160deg, rgba(139,0,0,0.18), rgba(139,0,0,0.02));
+    transform:scale(1.03);
+  }
+  .plan-badge{
+    position:absolute;
+    top:-13px; left:30px;
+    background:var(--blood-bright);
+    color:var(--white);
+    font-size:0.68rem;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    padding:5px 12px;
+  }
+  .plan-name{font-size:0.78rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--silver-pale);margin-bottom:14px;}
+  .plan-price{font-family:var(--font-display);font-size:2.4rem;color:var(--white);margin-bottom:4px;}
+  .plan-price span{font-size:1rem;font-family:var(--font-body);color:rgba(245,246,248,0.5);}
+  .plan-desc{font-size:0.88rem;color:rgba(245,246,248,0.65);margin-bottom:28px;line-height:1.5;}
+  .plan-card .btn{margin-top:auto;justify-content:center;width:100%;}
+
+  /* ---------- Testimonials ---------- */
+  .testimonials{background:var(--forest);}
+  .test-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:28px;
+  }
+  .test-card{
+    padding:32px;
+    border-left:2px solid var(--blood-bright);
+    background:rgba(255,255,255,0.02);
+  }
+  .test-card p.quote{font-size:1.02rem;line-height:1.55;color:var(--white);margin-bottom:18px;font-style:italic;}
+  .test-card .who{font-size:0.8rem;letter-spacing:0.05em;color:var(--silver-pale);text-transform:uppercase;}
+
+  /* ---------- Final CTA ---------- */
+  .final-cta{
+    position:relative;
+    text-align:center;
+    padding:150px 6vw;
+    background:
+      radial-gradient(circle at 50% 20%, rgba(139,0,0,0.35), transparent 55%),
+      linear-gradient(180deg, #0b0f1a, #1a0708 70%, #0b0f1a);
+    overflow:hidden;
+  }
+  .final-cta h2{font-size:clamp(2.2rem,4.5vw,3.6rem);margin-bottom:18px;color:var(--white);}
+  .final-cta p{color:var(--silver-pale);margin-bottom:44px;font-size:1.05rem;}
+
+  /* ---------- Moon phase widget ---------- */
+  .moon-widget{
+    max-width:640px;
+    margin:0 auto 60px;
+    padding:34px;
+    border:1px solid rgba(192,192,192,0.25);
+    background:rgba(221,228,235,0.03);
+    display:flex;
+    align-items:center;
+    gap:28px;
+  }
+  .moon-widget .disc{
+    width:70px;height:70px;border-radius:50%;
+    background:var(--silver-pale);
+    flex-shrink:0;
+    position:relative;
+    box-shadow:0 0 30px rgba(221,228,235,0.4);
+  }
+  .moon-widget .shadow{
+    position:absolute;top:0;bottom:0;
+    background:var(--navy);
+    border-radius:50%;
+  }
+  .moon-widget .info{text-align:left;}
+  .moon-widget .info .eyebrow{margin-bottom:4px;display:block;}
+  .moon-widget .info h4{font-family:var(--font-display);font-size:1.2rem;color:var(--white);margin-bottom:4px;}
+  .moon-widget .info p{font-size:0.85rem;color:rgba(245,246,248,0.6);}
+
+  /* ---------- Footer ---------- */
+  footer{
+    padding:50px 6vw;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:20px;
+    border-top:1px solid rgba(192,192,192,0.12);
+    background:var(--navy);
+    font-size:0.8rem;
+    color:rgba(245,246,248,0.5);
+  }
+  footer a{text-decoration:none;color:rgba(221,228,235,0.7);}
+  footer a:hover{color:var(--silver-pale);}
+
+  @media (max-width:900px){
+    .hero-grid{grid-template-columns:1fr;padding-top:120px;}
+    .problem-list{grid-template-columns:1fr;}
+    .howl-track{grid-template-columns:1fr 1fr;gap:40px 0;}
+    .howl-track::before{display:none;}
+    nav .nav-links{display:none;}
+    .moon-widget{flex-direction:column;text-align:center;}
+    .moon-widget .info{text-align:center;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important; transition:none !important;}
+  }
+
+  .fade-up{
+    opacity:0;
+    transform:translateY(24px);
+    transition:opacity .8s ease, transform .8s ease;
+  }
+  .fade-up.visible{opacity:1;transform:translateY(0);}
+
+  :focus-visible{
+    outline:2px solid var(--silver-pale);
+    outline-offset:3px;
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="brand">HOWLING<span>&nbsp;PACKAGE</span></div>
+  <div class="nav-links">
+    <a href="#why">Why Us</a>
+    <a href="#how">How It Works</a>
+    <a href="#plans">Plans</a>
+    <a href="#testimonials">Pack Talk</a>
+  </div>
+  <a href="#plans" class="btn btn-silver" style="padding:11px 20px;font-size:0.72rem;">Subscribe</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero moonglow-bg">
+  <div class="wolf-pattern"></div>
+  <div class="hero-grid">
+    <div>
+      <span class="eyebrow">Monthly Lunar Subscription</span>
+      <h1>For Those Nights<br>You Can't <em>Control</em></h1>
+      <p class="tagline">"Super absorbent. Full moon approved."</p>
+      <div>
+        <a href="#plans" class="btn btn-blood">Subscribe Before the Next Full Moon</a>
+        <a href="https://easypagex.github.com" target="_blank" rel="noopener" class="easypagex-note">Built with EasyPageX →</a>
+      </div>
+    </div>
+    <div class="moon-scene">
+      <svg viewBox="0 0 500 580" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="moonGrad" cx="50%" cy="35%" r="65%">
+            <stop offset="0%" stop-color="#F5F6F8"/>
+            <stop offset="55%" stop-color="#DDE4EB"/>
+            <stop offset="100%" stop-color="#9AA3AC"/>
+          </radialGradient>
+          <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#050710"/>
+            <stop offset="60%" stop-color="#0b1420"/>
+            <stop offset="100%" stop-color="#0f1f16"/>
+          </linearGradient>
+          <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="rgba(221,228,235,0.55)"/>
+            <stop offset="100%" stop-color="rgba(221,228,235,0)"/>
+          </radialGradient>
+        </defs>
+        <rect width="500" height="580" fill="url(#skyGrad)"/>
+        <circle cx="350" cy="130" r="150" fill="url(#glow)"/>
+        <circle cx="350" cy="130" r="80" fill="url(#moonGrad)"/>
+        <circle cx="330" cy="105" r="10" fill="#B8C0C8" opacity="0.5"/>
+        <circle cx="370" cy="150" r="6" fill="#B8C0C8" opacity="0.4"/>
+        <circle cx="355" cy="90" r="4" fill="#B8C0C8" opacity="0.4"/>
+        <!-- forest silhouette -->
+        <polygon points="0,580 0,420 40,380 70,440 110,360 150,430 190,390 230,460 260,400 300,470 330,410 370,460 410,400 450,450 500,410 500,580" fill="#060a10"/>
+        <!-- wolf silhouette -->
+        <path d="M180 560 Q195 470 165 420 Q150 390 185 380 Q200 345 235 360 Q255 330 275 360 Q305 340 315 380 Q350 390 335 425 Q365 465 335 560 Q290 520 275 560 Q260 520 245 560 Q220 525 205 560 Q192 525 180 560Z" fill="#050609"/>
+        <path d="M235 360 L228 335 L245 350 Z" fill="#050609"/>
+        <path d="M275 360 L282 333 L295 350 Z" fill="#050609"/>
+        <!-- roll of toilet paper as trophy -->
+        <g transform="translate(190,300)">
+          <ellipse cx="30" cy="8" rx="30" ry="10" fill="#F5F6F8"/>
+          <rect x="0" y="8" width="60" height="34" fill="#EDEFF2"/>
+          <ellipse cx="30" cy="42" rx="30" ry="10" fill="#DDE4EB"/>
+          <ellipse cx="30" cy="8" rx="12" ry="5" fill="#8B93A0"/>
+        </g>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section class="problem" id="problem">
+  <div class="section-head fade-up">
+    <span class="eyebrow">The Reality</span>
+    <h2>Full Moon Struggles Are Real</h2>
+  </div>
+  <div class="problem-list fade-up">
+    <div class="problem-item">
+      <span class="mark">✦</span>
+      <p>Uncontrollable shedding that regular two-ply simply cannot absorb.</p>
+    </div>
+    <div class="problem-item">
+      <span class="mark">✦</span>
+      <p>Messy, sudden transformations that don't wait for you to find the good paper.</p>
+    </div>
+    <div class="problem-item">
+      <span class="mark">✦</span>
+      <p>Regular toilet paper tears the moment claws get involved. It just doesn't cut it.</p>
+    </div>
+    <div class="problem-item">
+      <span class="mark">✦</span>
+      <p>Morning-after regret, forest debris, and cleanup no human roommate should witness.</p>
+    </div>
+  </div>
+</section>
+
+<!-- WHY -->
+<section id="why">
+  <div class="section-head fade-up">
+    <span class="eyebrow">The Formula</span>
+    <h2>Why Our Toilet Paper?</h2>
+  </div>
+  <div class="why-grid fade-up">
+    <div class="why-card">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="12" r="9"/><path d="M8 12h8M8 8h8M8 16h5"/></svg>
+      <h3>Triple-Ply, Claw Resistant</h3>
+      <p>Ultra-absorbent core engineered to survive claws, fur, and everything in between.</p>
+    </div>
+    <div class="why-card">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M12 3v18M5 8l7-5 7 5M5 16l7 5 7-5"/></svg>
+      <h3>Moon-Activated Scent Control</h3>
+      <p>A subtle pine and blood accord that neutralizes odor without alerting the neighbors.</p>
+    </div>
+    <div class="why-card">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 12c4-8 12-8 16 0-4 8-12 8-16 0z"/><circle cx="12" cy="12" r="2.5"/></svg>
+      <h3>Built for Sudden Shifts</h3>
+      <p>Won't tear mid-transformation, even during the fastest, most violent changes.</p>
+    </div>
+    <div class="why-card">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M12 2l2.5 6.5L21 11l-6.5 2.5L12 20l-2.5-6.5L3 11l6.5-2.5z"/></svg>
+      <h3>Silver-Threaded Strength</h3>
+      <p>Reinforced with real silver fiber for tear resistance werewolves can trust.</p>
+    </div>
+    <div class="why-card">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M12 21c-4-3-8-6-8-11a8 8 0 0116 0c0 5-4 8-8 11z"/></svg>
+      <h3>Biodegradable</h3>
+      <p>Breaks down fast in forest soil, so the spirits stay calm and the woods stay wild.</p>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+  <div class="section-head fade-up">
+    <span class="eyebrow">The Cycle</span>
+    <h2>How It Works</h2>
+  </div>
+  <div class="howl-track fade-up">
+    <div class="howl-step">
+      <div class="phase"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#DDE4EB" stroke-width="1.4"><circle cx="12" cy="12" r="9"/></svg></div>
+      <h3>Subscribe Now</h3>
+      <p>Choose your plan and lock in delivery before the next lunar cycle begins.</p>
+    </div>
+    <div class="howl-step">
+      <div class="phase"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#DDE4EB" stroke-width="1.4"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 000 18z" fill="#DDE4EB" stroke="none"/></svg></div>
+      <h3>Get Your Howling Package</h3>
+      <p>A discreet monthly box arrives at your door, no forest mail required.</p>
+    </div>
+    <div class="howl-step">
+      <div class="phase"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#DDE4EB" stroke-width="1.4"><circle cx="12" cy="12" r="9" fill="#DDE4EB" stroke="none"/></svg></div>
+      <h3>Survive the Full Moon</h3>
+      <p>Stocked and ready, whatever shape the night takes.</p>
+    </div>
+    <div class="howl-step">
+      <div class="phase"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#DDE4EB" stroke-width="1.4"><path d="M12 3a9 9 0 010 18z" fill="#DDE4EB" stroke="none"/><circle cx="12" cy="12" r="9"/></svg></div>
+      <h3>Wake Up With Dignity</h3>
+      <p>No stains, no evidence, no awkward conversation with the pack.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PLANS -->
+<section id="plans">
+  <div class="section-head fade-up">
+    <span class="eyebrow">Choose Your Pack</span>
+    <h2>Subscription Plans</h2>
+  </div>
+  <div class="plans-grid fade-up">
+    <div class="plan-card">
+      <div class="plan-name">New Moon Plan</div>
+      <div class="plan-price">$12<span>/mo</span></div>
+      <p class="plan-desc">Basic protection for light shedders and quiet nights.</p>
+      <a href="#" class="btn btn-outline">Choose New Moon</a>
+    </div>
+    <div class="plan-card">
+      <div class="plan-name">Half Moon Plan</div>
+      <div class="plan-price">$19<span>/mo</span></div>
+      <p class="plan-desc">Stronger absorbency plus scent control for building intensity.</p>
+      <a href="#" class="btn btn-outline">Choose Half Moon</a>
+    </div>
+    <div class="plan-card featured">
+      <span class="plan-badge">Best Seller</span>
+      <div class="plan-name">Full Moon Alpha Plan</div>
+      <div class="plan-price">$29<span>/mo</span></div>
+      <p class="plan-desc">Maximum strength, emergency backup rolls, and silver-wrapped packaging.</p>
+      <a href="#" class="btn btn-blood">Choose Alpha</a>
+    </div>
+    <div class="plan-card">
+      <div class="plan-name">Lunar Pack</div>
+      <div class="plan-price">$49<span>/mo</span></div>
+      <p class="plan-desc">Built for the whole werewolf household. One box, every den.</p>
+      <a href="#" class="btn btn-outline">Choose Lunar Pack</a>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials" id="testimonials">
+  <div class="section-head fade-up">
+    <span class="eyebrow">Pack Talk</span>
+    <h2>What the Howling Package Handles</h2>
+  </div>
+  <div class="test-grid fade-up">
+    <div class="test-card">
+      <p class="quote">Saved my couch after last month's shift. Ten out of ten, would shed again.</p>
+      <div class="who">Marcus — Alpha, Northwest Pack</div>
+    </div>
+    <div class="test-card">
+      <p class="quote">Finally something that handles post-transformation chaos without judgment.</p>
+      <div class="who">Luna, 29</div>
+    </div>
+    <div class="test-card">
+      <p class="quote">My human roommate thanks you. Genuinely. She stopped asking questions.</p>
+      <div class="who">Anonymous Werewolf</div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final-cta">
+  <div class="wolf-pattern" style="opacity:0.06;"></div>
+  <div style="position:relative;z-index:2;">
+    <span class="eyebrow">Time Is Short</span>
+    <h2>Don't Get Caught Unprepared This Full Moon</h2>
+
+    <div class="moon-widget" id="moonWidget">
+      <div class="disc" id="moonDisc"><div class="shadow" id="moonShadow"></div></div>
+      <div class="info">
+        <span class="eyebrow">Moon Tracker</span>
+        <h4 id="moonPhaseName">Calculating phase…</h4>
+        <p id="moonDaysAway">Checking the sky for you.</p>
+      </div>
+    </div>
+
+    <p>Subscribe today and never face a shift under-supplied again.</p>
+    <a href="#plans" class="btn btn-blood" style="padding:20px 46px;font-size:0.9rem;">Join the Pack &amp; Subscribe</a>
+    <a href="https://easypagex.github.com" target="_blank" rel="noopener" class="easypagex-note">Built with EasyPageX →</a>
+  </div>
+</section>
+
+<footer>
+  <div class="brand" style="font-size:0.95rem;">HOWLING<span>&nbsp;PACKAGE</span></div>
+  <div>© 2026 Howling Package Co. Not liable for lost fur, torn upholstery, or forest spirit disputes.</div>
+  <a href="https://easypagex.github.com" target="_blank" rel="noopener">Made with EasyPageX</a>
+</footer>
+
+<script>
+  // Fade-up reveal on scroll
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('visible'); io.unobserve(e.target); } });
+  },{threshold:0.15});
+  document.querySelectorAll('.fade-up').forEach(el=>io.observe(el));
+
+  // Moon phase calculator (approximate, based on known new moon reference)
+  function getMoonPhase(date){
+    const synodic = 29.53058867;
+    const knownNewMoon = new Date(Date.UTC(2000,0,6,18,14)); // Jan 6 2000 new moon
+    const diffDays = (date - knownNewMoon) / 86400000;
+    let phase = (diffDays % synodic) / synodic;
+    if(phase < 0) phase += 1;
+    return phase; // 0 = new moon, 0.5 = full moon
+  }
+
+  function phaseName(p){
+    if(p < 0.03 || p > 0.97) return "New Moon";
+    if(p < 0.22) return "Waxing Crescent";
+    if(p < 0.28) return "First Quarter";
+    if(p < 0.47) return "Waxing Gibbous";
+    if(p < 0.53) return "Full Moon";
+    if(p < 0.72) return "Waning Gibbous";
+    if(p < 0.78) return "Last Quarter";
+    return "Waning Crescent";
+  }
+
+  function daysUntilFull(p){
+    // full moon at phase 0.5
+    let diff = 0.5 - p;
+    if(diff < 0) diff += 1;
+    return Math.round(diff * 29.53058867);
+  }
+
+  const now = new Date();
+  const p = getMoonPhase(now);
+  const name = phaseName(p);
+  const daysAway = daysUntilFull(p);
+
+  document.getElementById('moonPhaseName').textContent = "Tonight: " + name;
+  document.getElementById('moonDaysAway').textContent = daysAway === 0
+    ? "Tonight is the full moon. Godspeed."
+    : daysAway + " day" + (daysAway===1?"":"s") + " until the next full moon.";
+
+  // visual shadow based on phase (simple left/right cover)
+  const shadow = document.getElementById('moonShadow');
+  const illum = 1 - Math.abs(p - 0.5) * 2; // 0 at new, 1 at full
+  const coverWidth = (1 - illum) * 70;
+  if(p < 0.5){
+    // waxing: shadow on left, shrinking
+    shadow.style.left = "0";
+    shadow.style.right = "auto";
+    shadow.style.width = coverWidth + "px";
+  } else {
+    // waning: shadow on right, growing
+    shadow.style.right = "0";
+    shadow.style.left = "auto";
+    shadow.style.width = coverWidth + "px";
+  }
+</script>
+
+</body>
+</html>
